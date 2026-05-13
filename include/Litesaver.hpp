@@ -11,6 +11,26 @@
 #ifndef _LITESAVER_HPP_
 #define _LITESAVER_HPP_
 
-#include <SQLiteDB.hpp>
+#include <filesystem>
+#include <memory>
+
+namespace Litesaver
+{
+class Base
+{
+  public:
+    Base(std::filesystem::path,
+         bool fast_mode          = false,
+         bool multithread_enable = false);
+    ~Base();
+
+  private:
+    struct Core;
+
+  private:
+    std::unique_ptr<Core> core;
+};
+
+} // namespace Litesaver
 
 #endif // _LITESAVER_HPP_

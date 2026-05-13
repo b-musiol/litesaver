@@ -11,8 +11,11 @@
 
 #include "../include/Litesaver.hpp"
 #include <gtest/gtest.h>
+#include <filesystem>
 
-
-TEST(Litesaver, mocktest)
+TEST(Litesaver, basic_open)
 {
+    {
+        Litesaver::Base litesaver("./Litesaver_basic_open.db");
+    }
 }
