@@ -45,6 +45,10 @@ Base::Base(std::filesystem::path file_path,
 
 Base::~Base()
 {
+    core->log_function = "exit";
+    core->log_module = "Litesaver";
+    core->log_msg_type = "SYSTEM";
+    core->insert_log("Closing!");
 }
 
 void Base::set_timezone(std::string_view timezone)
