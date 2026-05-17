@@ -44,6 +44,7 @@ void Base::Core::reset_input_table()
         row.push_text(key);
         if (std::holds_alternative<std::int64_t>(values.value))
         {
+            row.push_text(sql::constants::integer_type_name);
             row.push_integer(std::get<std::int64_t>(values.value));
             row.push_null();
             row.push_null();
@@ -51,6 +52,7 @@ void Base::Core::reset_input_table()
         }
         else if (std::holds_alternative<double>(values.value))
         {
+            row.push_text(sql::constants::float_type_name);
             row.push_null();
             row.push_real(std::get<double>(values.value));
             row.push_null();
@@ -58,6 +60,7 @@ void Base::Core::reset_input_table()
         }
         else if (std::holds_alternative<std::string>(values.value))
         {
+            row.push_text(sql::constants::string_type_name);
             row.push_null();
             row.push_null();
             row.push_text(std::get<std::string>(values.value));
@@ -66,6 +69,7 @@ void Base::Core::reset_input_table()
         else if (std::holds_alternative<std::vector<std::uint8_t>>(
                      values.value))
         {
+            row.push_text(sql::constants::blob_type_name);
             row.push_null();
             row.push_null();
             row.push_null();

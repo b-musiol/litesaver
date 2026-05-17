@@ -22,6 +22,11 @@ namespace constants
 constexpr const char *input_table_name    = "input";
 constexpr const char *output_table_prefix = "output";
 constexpr const char *help_table_suffix   = "help";
+
+constexpr const char *integer_type_name = "integer";
+constexpr const char *float_type_name   = "float";
+constexpr const char *string_type_name  = "string";
+constexpr const char *blob_type_name    = "blob";
 } // namespace constants
 
 /**
@@ -38,6 +43,7 @@ std::string create_nonunique_table(const char *table_name,
  */
 std::string create_unique_table(const char *table_name);
 std::string insert_into_unique_table(const char *table_name);
+std::string select_from_unique_table(const char *table_name);
 
 /**
  * Query to create the help table of a nonunique table of the name

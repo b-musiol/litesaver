@@ -10,11 +10,14 @@
 
 #include "../include/Litesaver.hpp"
 #include "../include/Core.hpp"
+#include "../include/queries.hpp"
 #include <SQLiteDB.hpp>
 #include <chrono>
 #include <filesystem>
 #include <memory>
+#include <stdexcept>
 #include <string_view>
+#include <variant>
 
 using namespace Litesaver;
 
@@ -92,4 +95,45 @@ void Base::log_set_module(std::string_view module_name)
 void Base::log_set_function(std::string_view function_name)
 {
     core->log_function = function_name;
+}
+
+value_t Base::get_input(std::string_view key)
+{
+    SQLiteDB::Row params;
+    params.push_text(std::string(key));
+    SQLiteDB::Table result = core->db->execute_statement_returns(
+        sql::select_from_unique_table(sql::constants::input_table_name),
+        params);
+    if (result.data.empty())
+    {
+        throw std::runtime_error(
+            std::format("Litesaver: Tried to get an input value for key [{}]. "
+                        "This value does not exist.",
+                        key));
+    }
+    value_t value;
+    auto &output = result.data.at(0);
+    auto type    = output.get_text(1);
+    if (sql::constants::integer_type_name == type)
+    {
+        value = output.get_integer(2);
+    }
+    else if (sql::constants::float_type_name == type)
+    {
+        value = output.get_real(3);
+    }
+    else if (sql::constants::string_type_name == type)
+    {
+        value = output.get_text(4);
+    }
+    else if (sql::constants::blob_type_name == type)
+    {
+        value = output.get_blob(5);
+    }
+    else
+    {
+        value = std::monostate();
+    }
+
+    return value;
 }

@@ -42,7 +42,7 @@ enum ValueType
 };
 
 typedef std::
-    variant<std::int64_t, double, std::string, std::vector<std::uint8_t>>
+    variant<std::monostate, std::int64_t, double, std::string, std::vector<std::uint8_t>>
         value_t;
 
 struct ValueConfig
@@ -106,6 +106,10 @@ class Base
              std::vector<std::uint8_t> &dump);
     void log_set_module(std::string_view module_name);
     void log_set_function(std::string_view function_name);
+
+    // Input
+  public:
+    value_t get_input(std::string_view key);
 
   private:
     struct Core;
