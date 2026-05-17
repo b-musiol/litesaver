@@ -15,21 +15,23 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
-#include <string_view>
 
 namespace Litesaver
 {
 
-namespace log {
-enum class MsgType {
+namespace log
+{
+enum class MsgType
+{
     INFO,
     ERROR,
     WARNING,
     COMMENT,
 };
-}
+} // namespace log
 
 enum ValueType
 {
@@ -62,7 +64,6 @@ struct OutputSegment
     bool is_unique;
 };
 
-
 typedef std::map<std::string, ValueConfig> InputConfig;
 typedef std::map<std::string, OutputSegment> OutputConfig;
 
@@ -91,6 +92,20 @@ class Base
     ~Base();
 
     void set_timezone(std::string_view timezone);
+
+    // Log
+  public:
+    void log(log::MsgType msg_type, std::string_view msg);
+    void log(log::MsgType msg_type, std::string_view msg, double dump);
+    void log(log::MsgType msg_type, std::string_view msg, std::int64_t dump);
+    void log(log::MsgType msg_type,
+             std::string_view msg,
+             std::string_view dump);
+    void log(log::MsgType msg_type,
+             std::string_view msg,
+             std::vector<std::uint8_t> &dump);
+    void log_set_module(std::string_view module_name);
+    void log_set_function(std::string_view function_name);
 
   private:
     struct Core;

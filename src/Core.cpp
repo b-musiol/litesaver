@@ -17,7 +17,6 @@
 #include <format>
 #include <memory>
 
-
 using namespace Litesaver;
 
 Base::Core::Core(std::filesystem::path db_path,
@@ -31,7 +30,7 @@ Base::Core::Core(std::filesystem::path db_path,
                                               fast_mode))
 {
     const auto &timezone_db = std::chrono::get_tzdb();
-    tz = timezone_db.locate_zone("Europe/Berlin");
+    tz                      = timezone_db.locate_zone("Europe/Berlin");
 }
 
 void Base::Core::reset_input_table()
@@ -138,4 +137,61 @@ std::string Base::Core::get_current_time_string()
 {
     auto now = std::chrono::system_clock::now();
     return std::format("{:%Y-%m-%d %H:%M:%S}", tz->to_local(now));
+}
+
+void Base::Core::insert_log(std::string_view msg)
+{
+    SQLiteDB::Row params = params_base_(msg);
+
+    db->execute_statement_norows((sql::insert_log_table_no_dump()), params);
+}
+
+void Base::Core::insert_log(std::string_view msg, double dump)
+{
+    SQLiteDB::Row params = params_base_(msg);
+    params.push_real(dump);
+
+    db->execute_statement_norows((sql::insert_log_table_float_dump()), params);
+}
+
+void Base::Core::insert_log(std::string_view msg, std::int64_t dump)
+{
+    SQLiteDB::Row params = params_base_(msg);
+    params.push_integer(dump);
+
+    db->execute_statement_norows((sql::insert_log_table_int_dump()), params);
+}
+
+void Base::Core::insert_log(std::string_view msg, std::string_view dump)
+{
+    SQLiteDB::Row params = params_base_(msg);
+    params.push_text(std::string(dump));
+
+    db->execute_statement_norows((sql::insert_log_table_text_dump()), params);
+}
+
+void Base::Core::insert_log(std::string_view msg,
+                            std::vector<std::uint8_t> &dump)
+{
+    SQLiteDB::Row params = params_base_(msg);
+    params.push_blob(dump);
+
+    db->execute_statement_norows((sql::insert_log_table_blob_dump()), params);
+}
+
+SQLiteDB::Row Base::Core::params_base_(std::string_view msg)
+{
+    SQLiteDB::Row params;
+    // timestamp
+    params.push_text(get_current_time_string());
+    // msg_type
+    params.push_text(log_msg_type);
+    // module
+    params.push_text(log_module);
+    // function
+    params.push_text(log_function);
+    // msg
+    params.push_text(std::string(msg));
+
+    return params;
 }

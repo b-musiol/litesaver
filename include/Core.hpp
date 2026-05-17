@@ -14,9 +14,9 @@
 
 #include "../include/Litesaver.hpp"
 #include <SQLiteDB.hpp>
+#include <chrono>
 #include <filesystem>
 #include <memory>
-#include <chrono>
 
 namespace Litesaver
 {
@@ -25,7 +25,10 @@ struct Base::Core
     std::unique_ptr<SQLiteDB::Database> db;
     InputConfig input_config;   // std::map
     OutputConfig output_config; // std::map
-    const std::chrono::time_zone * tz;
+    const std::chrono::time_zone *tz;
+    std::string log_module   = "";
+    std::string log_function = "";
+    std::string log_msg_type = "";
 
     Core(std::filesystem::path db_path,
          bool fast_mode,
@@ -37,18 +40,33 @@ struct Base::Core
 
     std::string get_current_time_string();
 
+    constexpr std::string msg_type_to_string(log::MsgType mode)
+    {
+        switch (mode)
+        {
+        case log::MsgType::INFO:
+            return "Info";
+        case log::MsgType::ERROR:
+            return "Error";
+        case log::MsgType::WARNING:
+            return "Warning";
+        case log::MsgType::COMMENT:
+            return "Comment";
+        default:
+            return "not_implemented_";
+        }
 
-    constexpr std::string_view msg_type_to_string(log::MsgType mode) {
-    switch (mode) {
-        case log::MsgType::INFO:  return "Info";
-        case log::MsgType::ERROR:  return "Error";
-        case log::MsgType::WARNING: return "Warning";
-        case log::MsgType::COMMENT: return "Comment";
-        default: return "not_implemented_";
+        return "unknown";
     }
 
-    return "unknown";
-}
+    void insert_log(std::string_view msg);
+    void insert_log(std::string_view msg, double dump);
+    void insert_log(std::string_view msg, std::int64_t dump);
+    void insert_log(std::string_view msg, std::string_view dump);
+    void insert_log(std::string_view msg, std::vector<std::uint8_t> &dump);
+
+  private:
+    SQLiteDB::Row params_base_(std::string_view msg);
 };
 } // namespace Litesaver
 

@@ -113,7 +113,6 @@ std::string sql::create_help_table(const char *table_name)
                        table_name);
 }
 
-
 std::string sql::insert_into_unique_table(const char *table_name)
 {
     return std::format(
@@ -123,8 +122,8 @@ std::string sql::insert_into_unique_table(const char *table_name)
          "valInteger", "valFloat", "valText", "valBlob",
          "description")
         VALUES
-        (?, ?, ?, ?, ?, ?, ?);)sql", table_name
-    );
+        (?, ?, ?, ?, ?, ?, ?);)sql",
+        table_name);
 }
 
 std::string sql::insert_help_table(const char *table_name)
@@ -134,8 +133,8 @@ std::string sql::insert_help_table(const char *table_name)
         INSERT INTO {}
         ("key", "type", "description")
         VALUES
-        (?, ?, ?);)sql", table_name
-    );
+        (?, ?, ?);)sql",
+        table_name);
 }
 
 std::string sql::insert_log_table()
@@ -155,8 +154,7 @@ std::string sql::insert_log_table()
         "dumpBlob"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?);)sql"
-    );
+        (?, ?, ?, ?, ?, ?, ?, ?, ?);)sql");
 }
 
 std::string sql::insert_log_table_no_dump()
@@ -172,8 +170,7 @@ std::string sql::insert_log_table_no_dump()
         "msg"
         )
         VALUES
-        (?, ?, ?, ?, ?);)sql"
-    );
+        (?, ?, ?, ?, ?);)sql");
 }
 
 std::string sql::insert_log_table_int_dump()
@@ -190,8 +187,7 @@ std::string sql::insert_log_table_int_dump()
         "dumpInt"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql"
-    );
+        (?, ?, ?, ?, ?, ?);)sql");
 }
 
 std::string sql::insert_log_table_float_dump()
@@ -208,8 +204,7 @@ std::string sql::insert_log_table_float_dump()
         "dumpFloat"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql"
-    );
+        (?, ?, ?, ?, ?, ?);)sql");
 }
 
 std::string sql::insert_log_table_text_dump()
@@ -226,8 +221,7 @@ std::string sql::insert_log_table_text_dump()
         "dumpText"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql"
-    );
+        (?, ?, ?, ?, ?, ?);)sql");
 }
 
 std::string sql::insert_log_table_blob_dump()
@@ -244,6 +238,5 @@ std::string sql::insert_log_table_blob_dump()
         "dumpBlob"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql"
-    );
+        (?, ?, ?, ?, ?, ?);)sql");
 }
