@@ -4,6 +4,8 @@ project(litesaver)
 
 add_library(litesaver
   src/Litesaver.cpp
+  src/Core.cpp
+  src/queries.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -16,7 +18,7 @@ include(FetchContent)
 FetchContent_Declare(
   SQLiteDB
   GIT_REPOSITORY https://github.com/b-musiol/SQLiteDB.git
-  GIT_TAG        v0.1.0
+  GIT_TAG        v0.1.1
 )
 FetchContent_MakeAvailable(SQLiteDB)
 

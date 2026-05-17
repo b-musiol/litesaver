@@ -9,32 +9,34 @@
  */
 
 #include "../include/Litesaver.hpp"
+#include "../include/Core.hpp"
 #include <SQLiteDB.hpp>
 #include <filesystem>
 #include <memory>
 
 using namespace Litesaver;
 
-struct Base::Core
-{
-    std::unique_ptr<SQLiteDB::Database> db;
-
-    Core(std::filesystem::path db_path, bool fast_mode, bool multithread_enable)
-        : db(std::make_unique<SQLiteDB::Database>(db_path.string(),
-                                                  true,
-                                                  multithread_enable,
-                                                  !fast_mode,
-                                                  fast_mode,
-                                                  fast_mode))
-    {
-    }
-};
-
 Base::Base(std::filesystem::path file_path,
            bool fast_mode,
            bool multithread_enable)
     : core(std::make_unique<Core>(file_path, fast_mode, multithread_enable))
 {
+    
+}
+
+Base::Base(std::filesystem::path file_path,
+           InputConfig input_config,
+           OutputConfig output_config,
+           bool fast_mode,
+           bool multithread_enable)
+    : core(std::make_unique<Core>(file_path, fast_mode, multithread_enable))
+{
+    core->input_config = input_config;
+    core->output_config = output_config;
+
+    core->reset_input_table();
+    // core->reset_log_table();
+    core->reset_output_tables();
 }
 
 Base::~Base()
