@@ -35,6 +35,24 @@ std::string sql::create_unique_table(const char *table_name)
                        table_name);
 }
 
+std::string sql::create_log_table()
+{
+    return std::string(R"sql(
+    DROP TABLE IF EXISTS "log";
+    CREATE TABLE "log" (
+       	"timestamp"	TEXT,
+       	"msg_type"	TEXT,
+       	"module"	TEXT,
+       	"function"	TEXT,
+       	"msg"	TEXT,
+        "dumpInt"   INTEGER,
+        "dumpFloat" FLOAT,
+        "dumpText"  TEXT,
+        "dumpBlob"  BLOB
+       );
+    )sql");
+}
+
 std::string sql::create_nonunique_table(const char *table_name,
                                         ValueAnonSetConfig &vasc)
 {
@@ -117,5 +135,115 @@ std::string sql::insert_help_table(const char *table_name)
         ("key", "type", "description")
         VALUES
         (?, ?, ?);)sql", table_name
+    );
+}
+
+std::string sql::insert_log_table()
+{
+    return std::format(
+        R"sql(
+        INSERT INTO "log"
+        (
+        "timestamp",
+        "msg_type",
+        "module",
+        "function",
+        "msg",
+        "dumpInt",
+        "dumpFloat",
+        "dumpText",
+        "dumpBlob"
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?);)sql"
+    );
+}
+
+std::string sql::insert_log_table_no_dump()
+{
+    return std::format(
+        R"sql(
+        INSERT INTO "log"
+        (
+        "timestamp",
+        "msg_type",
+        "module",
+        "function",
+        "msg"
+        )
+        VALUES
+        (?, ?, ?, ?, ?);)sql"
+    );
+}
+
+std::string sql::insert_log_table_int_dump()
+{
+    return std::format(
+        R"sql(
+        INSERT INTO "log"
+        (
+        "timestamp",
+        "msg_type",
+        "module",
+        "function",
+        "msg",
+        "dumpInt"
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?);)sql"
+    );
+}
+
+std::string sql::insert_log_table_float_dump()
+{
+    return std::format(
+        R"sql(
+        INSERT INTO "log"
+        (
+        "timestamp",
+        "msg_type",
+        "module",
+        "function",
+        "msg",
+        "dumpFloat"
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?);)sql"
+    );
+}
+
+std::string sql::insert_log_table_text_dump()
+{
+    return std::format(
+        R"sql(
+        INSERT INTO "log"
+        (
+        "timestamp",
+        "msg_type",
+        "module",
+        "function",
+        "msg",
+        "dumpText"
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?);)sql"
+    );
+}
+
+std::string sql::insert_log_table_blob_dump()
+{
+    return std::format(
+        R"sql(
+        INSERT INTO "log"
+        (
+        "timestamp",
+        "msg_type",
+        "module",
+        "function",
+        "msg",
+        "dumpBlob"
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?);)sql"
     );
 }

@@ -46,6 +46,17 @@ std::string insert_into_unique_table(const char *table_name);
 std::string create_help_table(const char *table_name);
 std::string insert_help_table(const char *table_name);
 
+/**
+ * Query to create the log table.
+ */
+std::string create_log_table();
+std::string insert_log_table();
+std::string insert_log_table_no_dump();
+std::string insert_log_table_int_dump();
+std::string insert_log_table_float_dump();
+std::string insert_log_table_text_dump();
+std::string insert_log_table_blob_dump();
+
 } // namespace sql
 } // namespace Litesaver
 

@@ -12,9 +12,11 @@
 #include "../include/Core.hpp"
 #include "../include/queries.hpp"
 #include <SQLiteDB.hpp>
+#include <chrono>
 #include <filesystem>
 #include <format>
 #include <memory>
+
 
 using namespace Litesaver;
 
@@ -28,6 +30,8 @@ Base::Core::Core(std::filesystem::path db_path,
                                               fast_mode,
                                               fast_mode))
 {
+    const auto &timezone_db = std::chrono::get_tzdb();
+    tz = timezone_db.locate_zone("Europe/Berlin");
 }
 
 void Base::Core::reset_input_table()
@@ -35,7 +39,8 @@ void Base::Core::reset_input_table()
     db->execute_plain(
         sql::create_unique_table(sql::constants::input_table_name));
     std::vector<SQLiteDB::Row> params;
-    for (auto& [key, values] : input_config) {
+    for (auto &[key, values] : input_config)
+    {
         SQLiteDB::Row row;
         row.push_text(key);
         if (std::holds_alternative<std::int64_t>(values.value))
@@ -110,4 +115,27 @@ void Base::Core::reset_output_tables()
                 segment.content));
         }
     }
+}
+
+void Base::Core::reset_log_table()
+{
+    db->execute_plain(sql::create_log_table());
+    SQLiteDB::Row params;
+    // timestamp
+    params.push_text(get_current_time_string());
+    // msg_type
+    params.push_text("SYSTEM");
+    // module
+    params.push_text("Litesaver");
+    // function
+    params.push_text("init");
+    // msg
+    params.push_text("Litesaver first time initialization done.");
+    db->execute_statement_norows((sql::insert_log_table_no_dump()), params);
+}
+
+std::string Base::Core::get_current_time_string()
+{
+    auto now = std::chrono::system_clock::now();
+    return std::format("{:%Y-%m-%d %H:%M:%S}", tz->to_local(now));
 }

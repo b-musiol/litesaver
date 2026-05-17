@@ -17,10 +17,19 @@
 #include <string>
 #include <variant>
 #include <vector>
-
+#include <string_view>
 
 namespace Litesaver
 {
+
+namespace log {
+enum class MsgType {
+    INFO,
+    ERROR,
+    WARNING,
+    COMMENT,
+};
+}
 
 enum ValueType
 {
@@ -80,6 +89,8 @@ class Base
          bool fast_mode          = false,
          bool multithread_enable = false);
     ~Base();
+
+    void set_timezone(std::string_view timezone);
 
   private:
     struct Core;

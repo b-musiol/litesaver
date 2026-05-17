@@ -13,6 +13,8 @@
 #include <SQLiteDB.hpp>
 #include <filesystem>
 #include <memory>
+#include <chrono>
+#include <string_view>
 
 using namespace Litesaver;
 
@@ -35,10 +37,16 @@ Base::Base(std::filesystem::path file_path,
     core->output_config = output_config;
 
     core->reset_input_table();
-    // core->reset_log_table();
     core->reset_output_tables();
+    core->reset_log_table();
 }
 
 Base::~Base()
 {
+}
+
+void Base::set_timezone(std::string_view timezone)
+{
+    const auto& timezone_db = std::chrono::get_tzdb();
+    core->tz = timezone_db.locate_zone(timezone);
 }
