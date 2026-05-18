@@ -38,6 +38,8 @@ struct Base::Core
     void reset_output_tables();
     void reset_log_table();
 
+    ValueAnonSetConfig convert_ValueSetConfig_to_Anon(ValueSetConfig &vsc);
+
     std::string get_current_time_string();
 
     constexpr std::string msg_type_to_string(log::MsgType mode)
@@ -64,6 +66,9 @@ struct Base::Core
     void insert_log(std::string_view msg, std::int64_t dump);
     void insert_log(std::string_view msg, std::string_view dump);
     void insert_log(std::string_view msg, std::vector<std::uint8_t> &dump);
+
+    static std::vector<SQLiteDB::Row> into_vector_of_rows(table_t table);
+    static SQLiteDB::Row into_row(row_t row);
 
   private:
     SQLiteDB::Row params_base_(std::string_view msg);

@@ -41,9 +41,15 @@ enum ValueType
     BLOB
 };
 
-typedef std::
-    variant<std::monostate, std::int64_t, double, std::string, std::vector<std::uint8_t>>
-        value_t;
+typedef std::variant<std::monostate,
+                     std::int64_t,
+                     double,
+                     std::string,
+                     std::vector<std::uint8_t>>
+    value_t;
+
+typedef std::map<std::string, value_t> row_t;
+typedef std::vector<row_t> table_t;
 
 struct ValueConfig
 {
@@ -57,15 +63,22 @@ struct ValueAnonConfig
 };
 
 typedef std::map<std::string, ValueAnonConfig> ValueAnonSetConfig;
+typedef std::map<std::string, ValueConfig> ValueSetConfig;
 
-struct OutputSegment
+struct OutputAnonSegment
 {
     ValueAnonSetConfig content;
     bool is_unique;
 };
 
+struct OutputSegment
+{
+    ValueSetConfig content;
+    bool is_unique;
+};
+
 typedef std::map<std::string, ValueConfig> InputConfig;
-typedef std::map<std::string, OutputSegment> OutputConfig;
+typedef std::map<std::string, OutputAnonSegment> OutputConfig;
 
 class Base
 {
@@ -110,6 +123,12 @@ class Base
     // Input
   public:
     value_t get_input(std::string_view key);
+
+    //
+  public:
+    void save_nonunique(const char *table_name, row_t values);
+    void save_nonunique(const char *table_name, table_t values);
+    void save_unique();
 
   private:
     struct Core;

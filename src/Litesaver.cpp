@@ -45,10 +45,6 @@ Base::Base(std::filesystem::path file_path,
 
 Base::~Base()
 {
-    core->log_function = "exit";
-    core->log_module = "Litesaver";
-    core->log_msg_type = "SYSTEM";
-    core->insert_log("Closing!");
 }
 
 void Base::set_timezone(std::string_view timezone)
@@ -140,4 +136,24 @@ value_t Base::get_input(std::string_view key)
     }
 
     return value;
+}
+
+void Base::save_nonunique(const char *table_name, row_t values)
+{
+    table_t t_values;
+    t_values.push_back(values);
+    save_nonunique(table_name, t_values);
+}
+
+void Base::save_nonunique(const char *table_name, table_t values)
+{
+    std::vector<SQLiteDB::Row> params = core->into_vector_of_rows(values);
+
+    core->db->execute_statement_norows(
+        sql::insert_into_nonunique_output_table(table_name, values),
+        params);
+}
+
+void Base::save_unique()
+{
 }

@@ -98,6 +98,43 @@ std::string sql::create_nonunique_table(const char *table_name,
     return q.str();
 }
 
+std::string sql::insert_into_nonunique_table(const char *table_name,
+                                             ValueAnonSetConfig &vasc)
+{
+    std::stringstream q;
+    q << std::format(R"sql(INSERT INTO "{}" ()sql", table_name);
+    bool first_flag = true;
+    for (auto &[col_name, col_details] : vasc)
+    {
+        if (first_flag)
+        {
+            first_flag = false;
+        }
+        else
+        {
+            q << ", ";
+        }
+        q << col_name;
+    }
+    q << ") VALUES (";
+
+    first_flag = true;
+    for (auto &[col_name, col_details] : vasc)
+    {
+        if (first_flag)
+        {
+            first_flag = false;
+        }
+        else
+        {
+            q << ", ";
+        }
+        q << "?";
+    }
+    q << ");";
+    return q.str();
+}
+
 std::string sql::create_help_table(const char *table_name)
 {
     return std::format(R"sql(
@@ -248,8 +285,64 @@ std::string sql::select_from_unique_table(const char *table_name)
         SELECT "key", "type", 
          "valInteger", "valFloat", "valText", "valBlob",
          "description"
-         FROM {}
+         FROM "{}"
          WHERE key = ?;
         )sql",
         table_name);
+}
+
+std::string sql::update_unique_table(const char *table_name,
+                                     const char *col_name)
+{
+    return std::format(
+        R"sql(
+        UPDATE "{}"
+        SET "{}" = ?
+        WHERE "key" = ?;
+        )sql",
+        table_name,
+        col_name);
+}
+
+std::string sql::insert_into_nonunique_output_table(const char *table_name,
+                                                    row_t &row)
+{
+    std::stringstream q;
+    q << std::format(R"sql(INSERT INTO "output_{}" ()sql", table_name);
+    bool first_flag = true;
+    for (auto &[col_name, col_val] : row)
+    {
+        if (first_flag)
+        {
+            first_flag = false;
+        }
+        else
+        {
+            q << ", ";
+        }
+        q << col_name;
+    }
+    q << ") VALUES (";
+
+    first_flag = true;
+    for (auto &[col_name, col_val] : row)
+    {
+        if (first_flag)
+        {
+            first_flag = false;
+        }
+        else
+        {
+            q << ", ";
+        }
+        q << "?";
+    }
+    q << ");";
+    return q.str();
+}
+
+std::string sql::insert_into_nonunique_output_table(const char *table_name,
+                                                    table_t &table)
+{
+    return insert_into_nonunique_output_table(table_name, table.at(0));
 }

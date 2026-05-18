@@ -199,3 +199,47 @@ SQLiteDB::Row Base::Core::params_base_(std::string_view msg)
 
     return params;
 }
+
+std::vector<SQLiteDB::Row> Base::Core::into_vector_of_rows(table_t table)
+{
+    std::vector<SQLiteDB::Row> sqlitetable;
+
+    for (auto &row : table)
+    {
+        sqlitetable.push_back(into_row(row));
+    }
+
+    return sqlitetable;
+}
+
+SQLiteDB::Row Base::Core::into_row(row_t row)
+{
+    SQLiteDB::Row sqliterow;
+    for (auto &[col_name, value] : row)
+    {
+        if (std::holds_alternative<std::int64_t>(value))
+        {
+            sqliterow.push_integer(std::get<std::int64_t>(value));
+        }
+        else if (std::holds_alternative<double>(value))
+        {
+            sqliterow.push_real(std::get<double>(value));
+        }
+        else if (std::holds_alternative<std::string>(value))
+        {
+            sqliterow.push_text(std::get<std::string>(value));
+        }
+        else if (std::holds_alternative<std::vector<std::uint8_t>>(value))
+        {
+            sqliterow.push_blob(std::get<std::vector<std::uint8_t>>(value));
+        }
+        else
+        {
+            throw std::runtime_error(std::format(
+                "Implementation Error [Core::into_row]: Column of Type "
+                "found that is none of std::int64_t, double, std::string, "
+                "std::vector<std::uint8_t>."));
+        }
+    }
+    return sqliterow;
+}

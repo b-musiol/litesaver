@@ -36,6 +36,12 @@ constexpr const char *blob_type_name    = "blob";
  */
 std::string create_nonunique_table(const char *table_name,
                                    ValueAnonSetConfig &vasc);
+std::string insert_into_nonunique_table(const char *table_name,
+                                        ValueAnonSetConfig &vasc);
+std::string insert_into_nonunique_output_table(const char *table_name,
+                                               row_t &vasc);
+std::string insert_into_nonunique_output_table(const char *table_name,
+                                               table_t &vasc);
 
 /**
  * Query to creates a unique table, meaning there is one entry per key. The
@@ -43,6 +49,7 @@ std::string create_nonunique_table(const char *table_name,
  */
 std::string create_unique_table(const char *table_name);
 std::string insert_into_unique_table(const char *table_name);
+std::string update_unique_table(const char *table_name, const char *col_name);
 std::string select_from_unique_table(const char *table_name);
 
 /**
