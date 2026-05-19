@@ -110,6 +110,42 @@ void Base::Core::reset_output_tables()
                             segment_name,
                             sql::constants::help_table_suffix)
                     .c_str()));
+            std::vector<SQLiteDB::Row> help_params;
+            for (auto &[col, detail] : segment.content)
+            {
+                SQLiteDB::Row help_row;
+                help_row.push_text(col);
+                switch (detail.value_type)
+                {
+
+                case FLOAT:
+                    help_row.push_text(sql::constants::float_type_name);
+                    break;
+
+                case INTEGER:
+                    help_row.push_text(sql::constants::integer_type_name);
+                    break;
+
+                case TEXT:
+                    help_row.push_text(sql::constants::string_type_name);
+                    break;
+
+                case BLOB:
+                    help_row.push_text(sql::constants::blob_type_name);
+                    break;
+                }
+                help_row.push_text(detail.description);
+                help_params.push_back(help_row);
+            }
+
+            db->execute_statement_norows(
+                sql::insert_help_table(
+                    std::format("{}_{}_{}",
+                                sql::constants::output_table_prefix,
+                                segment_name,
+                                sql::constants::help_table_suffix)
+                        .c_str()),
+                help_params);
             db->execute_plain(sql::create_nonunique_table(
                 std::format("{}_{}",
                             sql::constants::output_table_prefix,

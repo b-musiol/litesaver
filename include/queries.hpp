@@ -44,7 +44,7 @@ std::string insert_into_nonunique_output_table(const char *table_name,
                                                table_t &vasc);
 
 /**
- * Query to creates a unique table, meaning there is one entry per key. The
+ * Query to create a unique table, meaning there is one entry per key. The
  * description/help is integrated into the same table.
  */
 std::string create_unique_table(const char *table_name);
