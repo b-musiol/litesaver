@@ -104,47 +104,109 @@ class Base
          bool multithread_enable = false);
     ~Base();
 
+    /**
+     * Sets the `timezone` to correctly save the log timestamps.
+     * Example: Europe/Berlin
+     */
     void set_timezone(std::string_view timezone);
 
     // Log
   public:
+    /**
+     * Logs a `msg` of `msg_type`.
+     */
     void log(log::MsgType msg_type, std::string_view msg);
+    /**
+     * Logs a `msg` of `msg_type` with an attached floating point data `dump`.
+     */
     void log(log::MsgType msg_type, std::string_view msg, double dump);
+    /**
+     * Logs a `msg` of `msg_type` with an attached integer data `dump`.
+     */
     void log(log::MsgType msg_type, std::string_view msg, std::int64_t dump);
+    /**
+     * Logs a `msg` of `msg_type` with an attached string data `dump`.
+     */
     void log(log::MsgType msg_type,
              std::string_view msg,
              std::string_view dump);
+    /**
+     * Logs a `msg` of `msg_type` with an attached blob data `dump`.
+     */
     void log(log::MsgType msg_type,
              std::string_view msg,
              std::vector<std::uint8_t> &dump);
+    /**
+     * Sets the string `module_name` for column `module` for all consecutive
+     * logs until this method is called with another `module_name` again.
+     */
     void log_set_module(std::string_view module_name);
+    /**
+     * Sets the string `function_name` for column `function` for all
+     * consecutive logs until this method is called with another
+     * `function_name` again.
+     */
     void log_set_function(std::string_view function_name);
 
     // Input
   public:
+    /**
+     * Gets the input entry at `key` from the pre-set type. The return value is
+     * a `std::variant`. For available data, see `Litesaver::value_t`.
+     */
     value_t get_input(std::string_view key);
 
-    //
+    // Output
   public:
+    /**
+     * Saves one row of `values` to the nonunique table output_`table_name`. The
+     * user is responsible for passing a fitting row.
+     */
     void save_nonunique(const char *table_name, row_t values);
+    /**
+     * Saves one table (multiple rows) of `values` to the nonunique table
+     * output_`table_name`. The user is responsible for passing a fitting table
+     * of rows.
+     */
     void save_nonunique(const char *table_name, table_t values);
 
+    /**
+     * Sets all values in the unique table output_`table_name` at `key` to
+     * `NULL`.
+     */
     void update_unique_with_null(const char *table_name, const char *key);
+    /**
+     * Sets the integer `value` in the unique table output_`table_name` at
+     * `key`.
+     */
     void update_unique(const char *table_name,
                        const char *key,
                        std::int64_t value);
+    /**
+     * Sets the floating point `value` in the unique table output_`table_name`
+     * at `key`.
+     */
     void update_unique(const char *table_name, const char *key, double value);
+    /**
+     * Sets the string `value` in the unique table output_`table_name` at
+     * `key`.
+     */
     void update_unique(const char *table_name,
                        const char *key,
                        std::string value);
+    /**
+     * Sets the blob `value` in the unique table output_`table_name` at `key`.
+     */
     void update_unique(const char *table_name,
                        const char *key,
                        std::vector<std::uint8_t> value);
 
   private:
+    /// PIMPL
     struct Core;
 
   private:
+    /// PIMPL
     std::unique_ptr<Core> core;
 };
 
