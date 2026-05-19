@@ -101,6 +101,47 @@ void Base::Core::reset_output_tables()
                             sql::constants::output_table_prefix,
                             segment_name)
                     .c_str()));
+
+            std::vector<SQLiteDB::Row> unique_params;
+            for (auto &[col, detail] : segment.content)
+            {
+                SQLiteDB::Row unique_row;
+                unique_row.push_text(col);
+
+                switch (detail.value_type)
+                {
+
+                case FLOAT:
+                    unique_row.push_text(sql::constants::float_type_name);
+                    break;
+                case INTEGER:
+                    unique_row.push_text(sql::constants::integer_type_name);
+                    break;
+                case TEXT:
+                    unique_row.push_text(sql::constants::string_type_name);
+                    break;
+                case BLOB:
+                    unique_row.push_text(sql::constants::blob_type_name);
+                    break;
+                }
+
+                unique_row.push_null(); // valInteger
+                unique_row.push_null(); // valFloat
+                unique_row.push_null(); // valText
+                unique_row.push_null(); // valBlob
+
+                unique_row.push_text(detail.description);
+
+                unique_params.push_back(unique_row);
+            }
+
+            db->execute_statement_norows(
+                sql::insert_into_unique_table(
+                    std::format("{}_{}",
+                                sql::constants::output_table_prefix,
+                                segment_name)
+                        .c_str()),
+                unique_params);
         }
         else
         {

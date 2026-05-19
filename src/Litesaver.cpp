@@ -154,6 +154,67 @@ void Base::save_nonunique(const char *table_name, table_t values)
         params);
 }
 
-void Base::save_unique()
+void Base::update_unique_with_null(const char *table_name, const char *key)
 {
+    SQLiteDB::Row params;
+    params.push_null(); // valInteger
+    params.push_null(); // valFloat
+    params.push_null(); // valText
+    params.push_null(); // valBlob
+    params.push_text(key);
+
+    core->db->execute_statement_norows(
+        sql::update_unique_output_table_all_values(table_name),
+        params);
+}
+void Base::update_unique(const char *table_name,
+                         const char *key,
+                         std::int64_t value)
+{
+    SQLiteDB::Row params;
+    params.push_integer(value); // valInteger
+    params.push_text(key);
+
+    core->db->execute_statement_norows(
+        sql::update_unique_output_table(
+            table_name,
+            sql::constants::integer_unique_col_name),
+        params);
+}
+void Base::update_unique(const char *table_name, const char *key, double value)
+{
+    SQLiteDB::Row params;
+    params.push_real(value); // valFloat
+    params.push_text(key);
+
+    core->db->execute_statement_norows(
+        sql::update_unique_output_table(table_name,
+                                        sql::constants::float_unique_col_name),
+        params);
+}
+void Base::update_unique(const char *table_name,
+                         const char *key,
+                         std::string value)
+{
+    SQLiteDB::Row params;
+    params.push_text(value); // valText
+    params.push_text(key);
+
+    core->db->execute_statement_norows(
+        sql::update_unique_output_table(table_name,
+                                        sql::constants::string_unique_col_name),
+        params);
+}
+void Base::update_unique(const char *table_name,
+                         const char *key,
+                         std::vector<std::uint8_t> value)
+{
+    SQLiteDB::Row params;
+    params.push_blob(value); // valBlob
+    params.push_text(key);
+
+    core->db->execute_statement_norows(
+        sql::update_unique_output_table(table_name,
+                                        sql::constants::blob_unique_col_name),
+        params);
 }

@@ -128,7 +128,18 @@ class Base
   public:
     void save_nonunique(const char *table_name, row_t values);
     void save_nonunique(const char *table_name, table_t values);
-    void save_unique();
+
+    void update_unique_with_null(const char *table_name, const char *key);
+    void update_unique(const char *table_name,
+                       const char *key,
+                       std::int64_t value);
+    void update_unique(const char *table_name, const char *key, double value);
+    void update_unique(const char *table_name,
+                       const char *key,
+                       std::string value);
+    void update_unique(const char *table_name,
+                       const char *key,
+                       std::vector<std::uint8_t> value);
 
   private:
     struct Core;

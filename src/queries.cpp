@@ -23,21 +23,25 @@ std::string sql::create_unique_table(const char *table_name)
     CREATE TABLE "{}" (
        	"key"	TEXT,
        	"type"	TEXT,
-       	"valInteger"	INTEGER,
-       	"valFloat"	REAL,
-       	"valText"	TEXT,
-       	"valBlob"	BLOB,
+       	"{}"	INTEGER,
+       	"{}"	REAL,
+       	"{}"	TEXT,
+       	"{}"	BLOB,
        	"description"	TEXT,
        	PRIMARY KEY("key")
        );
     )sql",
                        table_name,
-                       table_name);
+                       table_name,
+                       sql::constants::integer_unique_col_name,
+                       sql::constants::float_unique_col_name,
+                       sql::constants::string_unique_col_name,
+                       sql::constants::blob_unique_col_name);
 }
 
 std::string sql::create_log_table()
 {
-    return std::string(R"sql(
+    return std::format(R"sql(
     DROP TABLE IF EXISTS "log";
     CREATE TABLE "log" (
        	"timestamp"	TEXT,
@@ -45,12 +49,16 @@ std::string sql::create_log_table()
        	"module"	TEXT,
        	"function"	TEXT,
        	"msg"	TEXT,
-        "dumpInt"   INTEGER,
-        "dumpFloat" FLOAT,
-        "dumpText"  TEXT,
-        "dumpBlob"  BLOB
+        "{}"   INTEGER,
+        "{}" FLOAT,
+        "{}"  TEXT,
+        "{}"  BLOB
        );
-    )sql");
+    )sql",
+                       sql::constants::integer_log_col_name,
+                       sql::constants::float_log_col_name,
+                       sql::constants::string_log_col_name,
+                       sql::constants::blob_log_col_name);
 }
 
 std::string sql::create_nonunique_table(const char *table_name,
@@ -75,16 +83,16 @@ std::string sql::create_nonunique_table(const char *table_name,
         {
 
         case FLOAT:
-            q << "REAL" << "\n";
+            q << sql::constants::float_sql_type_name << "\n";
             break;
         case INTEGER:
-            q << "INTEGER" << "\n";
+            q << sql::constants::integer_sql_type_name << "\n";
             break;
         case TEXT:
-            q << "TEXT" << "\n";
+            q << sql::constants::string_sql_type_name << "\n";
             break;
         case BLOB:
-            q << "BLOB" << "\n";
+            q << sql::constants::blob_sql_type_name << "\n";
             break;
 
         default:
@@ -137,7 +145,8 @@ std::string sql::insert_into_nonunique_table(const char *table_name,
 
 std::string sql::create_help_table(const char *table_name)
 {
-    return std::format(R"sql(
+    return std::format(
+        R"sql(
     DROP TABLE IF EXISTS "{}";
     CREATE TABLE "{}" (
        	"key"	TEXT,
@@ -146,21 +155,26 @@ std::string sql::create_help_table(const char *table_name)
        	PRIMARY KEY("key")
        );
     )sql",
-                       table_name,
-                       table_name);
+        table_name,
+        table_name);
 }
 
 std::string sql::insert_into_unique_table(const char *table_name)
 {
     return std::format(
+
         R"sql(
         INSERT INTO "{}"
         ("key", "type", 
-         "valInteger", "valFloat", "valText", "valBlob",
+         "{}", "{}", "{}", "{}",
          "description")
         VALUES
         (?, ?, ?, ?, ?, ?, ?);)sql",
-        table_name);
+        table_name,
+        sql::constants::integer_unique_col_name,
+        sql::constants::float_unique_col_name,
+        sql::constants::string_unique_col_name,
+        sql::constants::blob_unique_col_name);
 }
 
 std::string sql::insert_help_table(const char *table_name)
@@ -176,7 +190,7 @@ std::string sql::insert_help_table(const char *table_name)
 
 std::string sql::insert_log_table()
 {
-    return std::string(
+    return std::format(
         R"sql(
         INSERT INTO "log"
         (
@@ -185,13 +199,17 @@ std::string sql::insert_log_table()
         "module",
         "function",
         "msg",
-        "dumpInt",
-        "dumpFloat",
-        "dumpText",
-        "dumpBlob"
+        "{}",
+        "{}",
+        "{}",
+        "{}"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?);)sql");
+        (?, ?, ?, ?, ?, ?, ?, ?, ?);)sql",
+        sql::constants::integer_log_col_name,
+        sql::constants::float_log_col_name,
+        sql::constants::string_log_col_name,
+        sql::constants::blob_log_col_name);
 }
 
 std::string sql::insert_log_table_no_dump()
@@ -212,7 +230,7 @@ std::string sql::insert_log_table_no_dump()
 
 std::string sql::insert_log_table_int_dump()
 {
-    return std::string(
+    return std::format(
         R"sql(
         INSERT INTO "log"
         (
@@ -221,15 +239,16 @@ std::string sql::insert_log_table_int_dump()
         "module",
         "function",
         "msg",
-        "dumpInt"
+        "{}"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql");
+        (?, ?, ?, ?, ?, ?);)sql",
+        sql::constants::integer_log_col_name);
 }
 
 std::string sql::insert_log_table_float_dump()
 {
-    return std::string(
+    return std::format(
         R"sql(
         INSERT INTO "log"
         (
@@ -238,15 +257,16 @@ std::string sql::insert_log_table_float_dump()
         "module",
         "function",
         "msg",
-        "dumpFloat"
+        "{}"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql");
+        (?, ?, ?, ?, ?, ?);)sql",
+        sql::constants::float_log_col_name);
 }
 
 std::string sql::insert_log_table_text_dump()
 {
-    return std::string(
+    return std::format(
         R"sql(
         INSERT INTO "log"
         (
@@ -255,15 +275,16 @@ std::string sql::insert_log_table_text_dump()
         "module",
         "function",
         "msg",
-        "dumpText"
+        "{}"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql");
+        (?, ?, ?, ?, ?, ?);)sql",
+        sql::constants::string_log_col_name);
 }
 
 std::string sql::insert_log_table_blob_dump()
 {
-    return std::string(
+    return std::format(
         R"sql(
         INSERT INTO "log"
         (
@@ -272,10 +293,11 @@ std::string sql::insert_log_table_blob_dump()
         "module",
         "function",
         "msg",
-        "dumpBlob"
+        "{}"
         )
         VALUES
-        (?, ?, ?, ?, ?, ?);)sql");
+        (?, ?, ?, ?, ?, ?);)sql",
+        sql::constants::blob_log_col_name);
 }
 
 std::string sql::select_from_unique_table(const char *table_name)
@@ -283,25 +305,48 @@ std::string sql::select_from_unique_table(const char *table_name)
     return std::format(
         R"sql(
         SELECT "key", "type", 
-         "valInteger", "valFloat", "valText", "valBlob",
+         "{}", "{}", "{}", "{}",
          "description"
          FROM "{}"
          WHERE key = ?;
         )sql",
+        sql::constants::integer_unique_col_name,
+        sql::constants::float_unique_col_name,
+        sql::constants::string_unique_col_name,
+        sql::constants::blob_unique_col_name,
         table_name);
 }
 
-std::string sql::update_unique_table(const char *table_name,
-                                     const char *col_name)
+std::string sql::update_unique_output_table(const char *table_name,
+                                            const char *col_name)
 {
     return std::format(
         R"sql(
-        UPDATE "{}"
+        UPDATE "output_{}"
         SET "{}" = ?
         WHERE "key" = ?;
         )sql",
         table_name,
         col_name);
+}
+
+std::string sql::update_unique_output_table_all_values(const char *table_name)
+{
+    return std::format(
+        R"sql(
+        UPDATE "output_{}"
+        SET
+        "{}" = ? AND
+        "{}" = ? AND
+        "{}" = ? AND
+        "{}" = ?
+        WHERE "key" = ?;
+        )sql",
+        table_name,
+        sql::constants::integer_unique_col_name,
+        sql::constants::float_unique_col_name,
+        sql::constants::string_unique_col_name,
+        sql::constants::blob_unique_col_name);
 }
 
 std::string sql::insert_into_nonunique_output_table(const char *table_name,

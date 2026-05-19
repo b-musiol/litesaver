@@ -27,6 +27,21 @@ constexpr const char *integer_type_name = "integer";
 constexpr const char *float_type_name   = "float";
 constexpr const char *string_type_name  = "string";
 constexpr const char *blob_type_name    = "blob";
+
+constexpr const char *integer_sql_type_name = "INTEGER";
+constexpr const char *float_sql_type_name   = "REAL";
+constexpr const char *string_sql_type_name  = "TEXT";
+constexpr const char *blob_sql_type_name    = "BLOB";
+
+constexpr const char *integer_unique_col_name = "valInteger";
+constexpr const char *float_unique_col_name   = "valFloat";
+constexpr const char *string_unique_col_name  = "valText";
+constexpr const char *blob_unique_col_name    = "valBlob";
+
+constexpr const char *integer_log_col_name = "dumpInt";
+constexpr const char *float_log_col_name   = "dumpFloat";
+constexpr const char *string_log_col_name  = "dumpText";
+constexpr const char *blob_log_col_name    = "dumpBlob";
 } // namespace constants
 
 /**
@@ -49,7 +64,9 @@ std::string insert_into_nonunique_output_table(const char *table_name,
  */
 std::string create_unique_table(const char *table_name);
 std::string insert_into_unique_table(const char *table_name);
-std::string update_unique_table(const char *table_name, const char *col_name);
+std::string update_unique_output_table(const char *table_name,
+                                       const char *col_name);
+std::string update_unique_output_table_all_values(const char *table_name);
 std::string select_from_unique_table(const char *table_name);
 
 /**
