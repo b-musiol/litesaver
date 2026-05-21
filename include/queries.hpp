@@ -19,7 +19,7 @@ namespace sql
 {
 namespace constants
 {
-constexpr const char *input_table_name    = "input";
+constexpr const char *input_table_prefix    = "input";
 constexpr const char *output_table_prefix = "output";
 constexpr const char *help_table_suffix   = "help";
 

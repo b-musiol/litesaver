@@ -29,8 +29,8 @@ Base::Base(std::filesystem::path file_path,
 }
 
 Base::Base(std::filesystem::path file_path,
-           InputConfig input_config,
-           OutputConfig output_config,
+           TableConfig input_config,
+           TableConfig output_config,
            bool fast_mode,
            bool multithread_enable)
     : core(std::make_unique<Core>(file_path, fast_mode, multithread_enable))
@@ -38,7 +38,7 @@ Base::Base(std::filesystem::path file_path,
     core->input_config  = input_config;
     core->output_config = output_config;
 
-    core->reset_input_table();
+    core->reset_input_tables();
     core->reset_output_tables();
     core->reset_log_table();
 }
@@ -97,12 +97,12 @@ void Base::log_set_function(std::string_view function_name)
     core->log_function = function_name;
 }
 
-value_t Base::get_input(std::string_view key)
+value_t Base::get_input_unique(std::string_view key)
 {
     SQLiteDB::Row params;
     params.push_text(std::string(key));
     SQLiteDB::Table result = core->db->execute_statement_returns(
-        sql::select_from_unique_table(sql::constants::input_table_name),
+        sql::select_from_unique_table(sql::constants::input_table_prefix),
         params);
     if (result.data.empty())
     {
@@ -217,4 +217,27 @@ void Base::update_unique(const char *table_name,
         sql::update_unique_output_table(table_name,
                                         sql::constants::blob_unique_col_name),
         params);
+}
+
+SQLiteDB::Table Base::direct_read_access(std::string query,
+                                         SQLiteDB::Row params)
+{
+    return core->db->execute_statement_returns(query, params);
+}
+SQLiteDB::Table Base::direct_read_access(std::string query)
+{
+    return core->db->execute_statement_returns(query);
+}
+void Base::direct_write_access(std::string query,
+                               std::vector<SQLiteDB::Row> params)
+{
+    core->db->execute_statement_norows(query, params);
+}
+void Base::direct_write_access(std::string query, SQLiteDB::Row params)
+{
+    core->db->execute_statement_norows(query, params);
+}
+void Base::direct_write_access(std::string query)
+{
+    core->db->execute_statement_norows(query);
 }

@@ -33,64 +33,7 @@ Base::Core::Core(std::filesystem::path db_path,
     tz                      = timezone_db.locate_zone("Europe/Berlin");
 }
 
-void Base::Core::reset_input_table()
-{
-    db->execute_plain(
-        sql::create_unique_table(sql::constants::input_table_name));
-    std::vector<SQLiteDB::Row> params;
-    for (auto &[key, values] : input_config)
-    {
-        SQLiteDB::Row row;
-        row.push_text(key);
-        if (std::holds_alternative<std::int64_t>(values.value))
-        {
-            row.push_text(sql::constants::integer_type_name);
-            row.push_integer(std::get<std::int64_t>(values.value));
-            row.push_null();
-            row.push_null();
-            row.push_null();
-        }
-        else if (std::holds_alternative<double>(values.value))
-        {
-            row.push_text(sql::constants::float_type_name);
-            row.push_null();
-            row.push_real(std::get<double>(values.value));
-            row.push_null();
-            row.push_null();
-        }
-        else if (std::holds_alternative<std::string>(values.value))
-        {
-            row.push_text(sql::constants::string_type_name);
-            row.push_null();
-            row.push_null();
-            row.push_text(std::get<std::string>(values.value));
-            row.push_null();
-        }
-        else if (std::holds_alternative<std::vector<std::uint8_t>>(
-                     values.value))
-        {
-            row.push_text(sql::constants::blob_type_name);
-            row.push_null();
-            row.push_null();
-            row.push_null();
-            row.push_blob(std::get<std::vector<std::uint8_t>>(values.value));
-        }
-        else
-        {
-            throw std::runtime_error(std::format(
-                "Implementation Error [reset_input_table]: Column of Type "
-                "found that is none of std::int64_t, double, std::string, "
-                "std::vector<std::uint8_t>."));
-        }
-        row.push_text(values.description);
-        params.push_back(row);
-    }
-    db->execute_statement_norows(
-        sql::insert_into_unique_table(sql::constants::input_table_name),
-        params);
-}
-
-void Base::Core::reset_output_tables()
+void Base::Core::reset_tables(const char * prefix)
 {
     for (auto &[segment_name, segment] : output_config)
     {
@@ -98,7 +41,7 @@ void Base::Core::reset_output_tables()
         {
             db->execute_plain(sql::create_unique_table(
                 std::format("{}_{}",
-                            sql::constants::output_table_prefix,
+                            prefix,
                             segment_name)
                     .c_str()));
 
@@ -138,7 +81,7 @@ void Base::Core::reset_output_tables()
             db->execute_statement_norows(
                 sql::insert_into_unique_table(
                     std::format("{}_{}",
-                                sql::constants::output_table_prefix,
+                                prefix,
                                 segment_name)
                         .c_str()),
                 unique_params);
@@ -147,7 +90,7 @@ void Base::Core::reset_output_tables()
         {
             db->execute_plain(sql::create_help_table(
                 std::format("{}_{}_{}",
-                            sql::constants::output_table_prefix,
+                            prefix,
                             segment_name,
                             sql::constants::help_table_suffix)
                     .c_str()));
@@ -182,19 +125,30 @@ void Base::Core::reset_output_tables()
             db->execute_statement_norows(
                 sql::insert_help_table(
                     std::format("{}_{}_{}",
-                                sql::constants::output_table_prefix,
+                                prefix,
                                 segment_name,
                                 sql::constants::help_table_suffix)
                         .c_str()),
                 help_params);
             db->execute_plain(sql::create_nonunique_table(
                 std::format("{}_{}",
-                            sql::constants::output_table_prefix,
+                            prefix,
                             segment_name)
                     .c_str(),
                 segment.content));
         }
     }
+}
+
+void Base::Core::reset_input_tables()
+{
+    reset_tables(sql::constants::input_table_prefix);
+}
+
+
+void Base::Core::reset_output_tables()
+{
+    reset_tables(sql::constants::output_table_prefix);
 }
 
 void Base::Core::reset_log_table()

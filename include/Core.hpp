@@ -23,8 +23,8 @@ namespace Litesaver
 struct Base::Core
 {
     std::unique_ptr<SQLiteDB::Database> db;
-    InputConfig input_config;   // std::map
-    OutputConfig output_config; // std::map
+    TableConfig input_config;   // std::map
+    TableConfig output_config; // std::map
     const std::chrono::time_zone *tz;
     std::string log_module   = "";
     std::string log_function = "";
@@ -34,8 +34,9 @@ struct Base::Core
          bool fast_mode,
          bool multithread_enable);
 
-    void reset_input_table();
+    void reset_input_tables();
     void reset_output_tables();
+    void reset_tables(const char * prefix);
     void reset_log_table();
 
     ValueAnonSetConfig convert_ValueSetConfig_to_Anon(ValueSetConfig &vsc);

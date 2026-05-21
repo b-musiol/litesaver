@@ -11,6 +11,7 @@
 #ifndef _LITESAVER_HPP_
 #define _LITESAVER_HPP_
 
+#include "SQLiteDB.hpp"
 #include <filesystem>
 #include <map>
 #include <memory>
@@ -65,20 +66,19 @@ struct ValueAnonConfig
 typedef std::map<std::string, ValueAnonConfig> ValueAnonSetConfig;
 typedef std::map<std::string, ValueConfig> ValueSetConfig;
 
-struct OutputAnonSegment
+struct AnonSegment
 {
     ValueAnonSetConfig content;
     bool is_unique;
 };
 
-struct OutputSegment
+struct Segment
 {
     ValueSetConfig content;
     bool is_unique;
 };
 
-typedef std::map<std::string, ValueConfig> InputConfig;
-typedef std::map<std::string, OutputAnonSegment> OutputConfig;
+typedef std::map<std::string, AnonSegment> TableConfig;
 
 class Base
 {
@@ -98,8 +98,8 @@ class Base
      * allows to be used multithreaded with `multithread_enable`.
      */
     Base(std::filesystem::path file_path,
-         InputConfig input_config,
-         OutputConfig output_config,
+         TableConfig input_config,
+         TableConfig output_config,
          bool fast_mode          = false,
          bool multithread_enable = false);
     ~Base();
@@ -154,7 +154,32 @@ class Base
      * Gets the input entry at `key` from the pre-set type. The return value is
      * a `std::variant`. For available data, see `Litesaver::value_t`.
      */
-    value_t get_input(std::string_view key);
+    value_t get_input_unique(std::string_view key);
+
+    /**
+     * Allows custom read access to the database with a `query` and a row of
+     * `params`, returning a `Table` with `SQLiteDB::Row`.
+     */
+    SQLiteDB::Table direct_read_access(std::string query, SQLiteDB::Row params);
+    /**
+     * Allows custom read access to the database with a `query`, returning a
+     * `Table` with `SQLiteDB::Row`.
+     */
+    SQLiteDB::Table direct_read_access(std::string query);
+    /**
+     * Allows custom write access to the database with a `query` and a vector of
+     * rows of `params`.
+     */
+    void direct_write_access(std::string query, std::vector<SQLiteDB::Row> params);
+    /**
+     * Allows custom write access to the database with a `query` and a row of
+     * `params`.
+     */
+    void direct_write_access(std::string query, SQLiteDB::Row params);
+    /**
+     * Allows custom write access to the database with a `query`.
+     */
+    void direct_write_access(std::string query);
 
     // Output
   public:
