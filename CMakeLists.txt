@@ -18,7 +18,8 @@ include(FetchContent)
 FetchContent_Declare(
   SQLiteDB
   GIT_REPOSITORY https://github.com/b-musiol/SQLiteDB.git
-  GIT_TAG        v0.1.1
+  GIT_TAG        main
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 FetchContent_MakeAvailable(SQLiteDB)
 
@@ -32,6 +33,7 @@ FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
   GIT_TAG        v1.17.0  # Or use a specific commit hash
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
