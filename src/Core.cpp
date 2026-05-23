@@ -33,9 +33,9 @@ Base::Core::Core(std::filesystem::path db_path,
     tz                      = timezone_db.locate_zone("Europe/Berlin");
 }
 
-void Base::Core::reset_tables(const char * prefix)
+void Base::Core::reset_tables(const char * prefix, TableConfig &table_config)
 {
-    for (auto &[segment_name, segment] : output_config)
+    for (auto &[segment_name, segment] : table_config)
     {
         if (true == segment.is_unique)
         {
@@ -142,13 +142,13 @@ void Base::Core::reset_tables(const char * prefix)
 
 void Base::Core::reset_input_tables()
 {
-    reset_tables(sql::constants::input_table_prefix);
+    reset_tables(sql::constants::input_table_prefix, input_config);
 }
 
 
 void Base::Core::reset_output_tables()
 {
-    reset_tables(sql::constants::output_table_prefix);
+    reset_tables(sql::constants::output_table_prefix, output_config);
 }
 
 void Base::Core::reset_log_table()

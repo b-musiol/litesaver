@@ -151,10 +151,11 @@ class Base
     // Input
   public:
     /**
-     * Gets the input entry at `key` from the pre-set type. The return value is
-     * a `std::variant`. For available data, see `Litesaver::value_t`.
+     * Gets the input entry at `key` from the pre-set type in one unique input
+     * `table`. The return value is a `std::variant`. For available data, see
+     * `Litesaver::value_t`.
      */
-    value_t get_input_unique(std::string_view key);
+    value_t get_input_unique(std::string_view table, std::string_view key);
 
     /**
      * Allows custom read access to the database with a `query` and a row of
@@ -170,7 +171,8 @@ class Base
      * Allows custom write access to the database with a `query` and a vector of
      * rows of `params`.
      */
-    void direct_write_access(std::string query, std::vector<SQLiteDB::Row> params);
+    void direct_write_access(std::string query,
+                             std::vector<SQLiteDB::Row> params);
     /**
      * Allows custom write access to the database with a `query` and a row of
      * `params`.

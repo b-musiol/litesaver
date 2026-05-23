@@ -97,12 +97,14 @@ void Base::log_set_function(std::string_view function_name)
     core->log_function = function_name;
 }
 
-value_t Base::get_input_unique(std::string_view key)
+value_t Base::get_input_unique(std::string_view table, std::string_view key)
 {
     SQLiteDB::Row params;
     params.push_text(std::string(key));
     SQLiteDB::Table result = core->db->execute_statement_returns(
-        sql::select_from_unique_table(sql::constants::input_table_prefix),
+        sql::select_from_unique_table(
+            std::format("{}_{}", sql::constants::input_table_prefix, table)
+                .c_str()),
         params);
     if (result.data.empty())
     {
