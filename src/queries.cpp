@@ -9,7 +9,7 @@
  * See LICENSE
  */
 
-#include "../include/queries.hpp"
+#include "../incl_private/queries.hpp"
 #include <format>
 #include <sstream>
 #include <stdexcept>

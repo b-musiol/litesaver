@@ -9,8 +9,8 @@
  * See LICENSE
  */
 
-#include "../include/Core.hpp"
-#include "../include/queries.hpp"
+#include "../incl_private/Core.hpp"
+#include "../incl_private/queries.hpp"
 #include <SQLiteDB.hpp>
 #include <chrono>
 #include <filesystem>

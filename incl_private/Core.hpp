@@ -12,7 +12,7 @@
 #ifndef _LITESAVER_CORE_HPP
 #define _LITESAVER_CORE_HPP
 
-#include "../include/Litesaver.hpp"
+#include "../incl/Litesaver.hpp"
 #include <SQLiteDB.hpp>
 #include <chrono>
 #include <filesystem>

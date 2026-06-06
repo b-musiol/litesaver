@@ -9,7 +9,7 @@
  * See LICENSE
  */
 
-#include "../include/Litesaver.hpp"
+#include "../incl/Litesaver.hpp"
 #include <cstdint>
 #include <filesystem>
 #include <gtest/gtest.h>

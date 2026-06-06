@@ -11,7 +11,7 @@
 #ifndef _LITESAVER_QUERIES_HPP
 #define _LITESAVER_QUERIES_HPP
 
-#include "Litesaver.hpp"
+#include "../incl/Litesaver.hpp"
 #include <string>
 namespace Litesaver
 {

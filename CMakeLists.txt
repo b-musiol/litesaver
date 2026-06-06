@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.14)
 
 project(litesaver)
 
+option(LITESAVER_BUILD_TESTS "Building tests for Litesaver" ON)
+set(SQLITEDB_BUILD_TESTS OFF)
+
 add_library(litesaver
   src/Litesaver.cpp
   src/Core.cpp
@@ -29,6 +32,7 @@ target_include_directories(litesaver PUBLIC
 
 target_link_libraries(litesaver PRIVATE SQLiteDB)
 
+if(LITESAVER_BUILD_TESTS)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
@@ -48,3 +52,4 @@ include(GoogleTest)
 gtest_discover_tests(RunTests_Litesaver)
 
 enable_testing()
+endif()
